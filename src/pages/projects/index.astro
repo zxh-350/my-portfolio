@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { withBase } from '../../lib/paths';
 import Layout from '../../components/Layout.astro';
 
 // 手写项目（AlgoLens 有自己的详情页），以后再往 content/projects 里加
@@ -40,7 +41,7 @@ const projects = [...manual, ...collected].sort((a, b) => b.date.getTime() - a.d
     {
       projects.map((project) => (
         <a
-          href={project.href}
+          href={withBase(project.href)}
           class="group block rounded-xl border border-ink-800 bg-ink-900/50 p-5 transition-colors hover:border-accent/50 hover:bg-ink-900"
         >
           <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">

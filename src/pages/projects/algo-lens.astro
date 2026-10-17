@@ -1,6 +1,7 @@
 ---
 import Layout from '../../components/Layout.astro';
 import AlgoLensDemo from '../../components/AlgoLensDemo.tsx';
+import { withBase } from '../../lib/paths';
 import trace from '../../data/algo-lens-trace.json';
 
 const rules = [
@@ -16,7 +17,7 @@ const rules = [
   description="AlgoLens：对拍反例可视化解释器与教学演示器，用步进的方式把「平静神经元仍传播」这类错误暴露出来。"
 >
   <nav class="text-xs text-slate-500">
-    <a class="hover:text-slate-300" href="/projects">← AI 实验室</a>
+    <a class="hover:text-slate-300" href={withBase('/projects')}>← AI 实验室</a>
   </nav>
 
   <header class="mt-4">

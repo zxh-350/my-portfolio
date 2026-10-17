@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { withBase } from '../../lib/paths';
 import Layout from '../../components/Layout.astro';
 
 export async function getStaticPaths() {
@@ -21,7 +22,7 @@ const dateText = date.toLocaleDateString('zh-CN', {
 <Layout title={title} description={note.data.summary}>
   <article>
     <nav class="text-xs text-slate-500">
-      <a class="hover:text-slate-300" href="/notes">← 算法笔记</a>
+      <a class="hover:text-slate-300" href={withBase('/notes')}>← 算法笔记</a>
     </nav>
 
     <header class="mt-4 border-b border-ink-800 pb-5">

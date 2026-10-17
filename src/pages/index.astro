@@ -1,6 +1,7 @@
 ---
 import Layout from '../components/Layout.astro';
 import { entries, site } from '../config';
+import { withBase } from '../lib/paths';
 ---
 
 <Layout>
@@ -21,7 +22,7 @@ import { entries, site } from '../config';
     {
       entries.map((entry) => (
         <a
-          href={entry.href}
+          href={withBase(entry.href)}
           class="group flex flex-col rounded-xl border border-ink-800 bg-ink-900/60 p-5 transition-colors hover:border-accent/50 hover:bg-ink-900"
         >
           <span class="text-base font-semibold text-slate-100 group-hover:text-accent-soft">

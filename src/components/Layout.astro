@@ -1,6 +1,7 @@
----
+﻿---
 import '../styles/global.css';
 import { nav, site } from '../config';
+import { currentPath, withBase } from '../lib/paths';
 
 interface Props {
   title?: string;
@@ -10,9 +11,11 @@ interface Props {
 const { title, description = site.description } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · 算法笔记与 AI 小作品`;
 const path = Astro.url.pathname;
+// 去掉部署前缀后再比对，子路径部署时导航高亮才不会失效
+const here = currentPath(path);
 
 const isCurrent = (href: string) =>
-  href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+  href === '/' ? here === '/' : here === href || here.startsWith(`${href}/`);
 ---
 
 <!doctype html>
@@ -30,8 +33,8 @@ const isCurrent = (href: string) =>
     <meta property="og:url" content={new URL(path, site.url).href} />
     <meta property="og:site_name" content={site.name} />
     <meta name="twitter:card" content="summary" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <link rel="manifest" href={withBase('/site.webmanifest')} />
     <meta name="theme-color" content="#0b0f14" />
     <meta name="color-scheme" content="dark" />
   </head>
@@ -43,14 +46,14 @@ const isCurrent = (href: string) =>
       <div
         class="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3"
       >
-        <a href="/" class="text-sm font-semibold tracking-wide text-slate-100">
+        <a href={withBase('/')} class="text-sm font-semibold tracking-wide text-slate-100">
           {site.name}
         </a>
         <nav class="-mx-1 flex items-center gap-1 text-sm">
           {
             nav.map((item) => (
               <a
-                href={item.href}
+                href={withBase(item.href)}
                 aria-current={isCurrent(item.href) ? 'page' : undefined}
                 class:list={[
                   'rounded-md px-2.5 py-1.5 transition-colors',

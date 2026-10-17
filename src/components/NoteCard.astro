@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../lib/paths';
 
 interface Props {
   note: CollectionEntry<'notes'>;
@@ -16,7 +17,7 @@ const dateText = date.toLocaleDateString('zh-CN', {
 ---
 
 <a
-  href={`/notes/${note.id}`}
+  href={withBase(`/notes/${note.id}`)}
   class="group block rounded-xl border border-ink-800 bg-ink-900/50 p-5 transition-colors hover:border-accent/50 hover:bg-ink-900"
 >
   <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
