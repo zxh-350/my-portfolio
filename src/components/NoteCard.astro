@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+const { note } = Astro.props;
+const { title, date, summary, source, tags } = note.data;
+
+const dateText = date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<a
+  href={`/notes/${note.id}`}
+  class="group block rounded-xl border border-ink-800 bg-ink-900/50 p-5 transition-colors hover:border-accent/50 hover:bg-ink-900"
+>
+  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <h2 class="text-base font-semibold text-slate-100 group-hover:text-accent-soft">{title}</h2>
+    <time class="text-xs text-slate-500" datetime={date.toISOString()}>{dateText}</time>
+  </div>
+
+  <p class="mt-2 text-sm leading-relaxed text-slate-400">{summary}</p>
+
+  <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+    {source && <span class="rounded bg-ink-800 px-2 py-0.5 text-slate-400">{source}</span>}
+    {tags.map((tag) => <span class="text-slate-500">#{tag}</span>)}
+  </div>
+</a>

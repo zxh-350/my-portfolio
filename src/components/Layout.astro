@@ -1,0 +1,86 @@
+---
+import '../styles/global.css';
+import { nav, site } from '../config';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · 算法笔记与 AI 小作品`;
+const path = Astro.url.pathname;
+
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(path, site.url).href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={new URL(path, site.url).href} />
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0b0f14" />
+    <meta name="color-scheme" content="dark" />
+  </head>
+
+  <body class="min-h-dvh">
+    <header
+      class="sticky top-0 z-10 border-b border-ink-800/70 bg-ink-950/80 backdrop-blur"
+    >
+      <div
+        class="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3"
+      >
+        <a href="/" class="text-sm font-semibold tracking-wide text-slate-100">
+          {site.name}
+        </a>
+        <nav class="-mx-1 flex items-center gap-1 text-sm">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+                class:list={[
+                  'rounded-md px-2.5 py-1.5 transition-colors',
+                  isCurrent(item.href)
+                    ? 'bg-ink-800 text-accent-soft'
+                    : 'text-slate-400 hover:bg-ink-900 hover:text-slate-100',
+                ]}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-5 py-10 sm:py-14">
+      <slot />
+    </main>
+
+    <footer class="border-t border-ink-800/70">
+      <div
+        class="mx-auto flex max-w-3xl flex-col gap-1 px-5 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <span>© {new Date().getFullYear()} {site.author} · 个人学习记录，非商业项目</span>
+        <span class="flex gap-3">
+          <a class="hover:text-slate-300" href={`mailto:${site.email}`}>邮箱</a>
+          <a class="hover:text-slate-300" href={site.github} rel="noreferrer">GitHub</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

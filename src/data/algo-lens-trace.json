@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "神经网络 · 平静神经元仍传播",
+    "source": "洛谷 P1038",
+    "rules": "只有 C[u] > 0 的神经元才能沿出边传播；后继收到 w × C[u]；无前驱的神经元是输入层。",
+    "bug": "C[u] <= 0 时仍执行 dp[to] += w × C[u]，平静神经元继续传信号。",
+    "expectedOutput": 4,
+    "buggyOutput": 6,
+    "expectedNote": "正确语义下，n3 与 n4 从 n2 收到的贡献应为 0，n7 应为 4。"
+  },
+  "nodes": [
+    { "id": "n1", "label": "1", "layer": "输入层", "u": 0, "initial": 1, "x": 60, "y": 40 },
+    { "id": "n5", "label": "5", "layer": "输入层", "u": 0, "initial": 2, "x": 60, "y": 175 },
+    { "id": "n2", "label": "2", "u": 2, "x": 240, "y": 40 },
+    { "id": "n6", "label": "6", "u": 3, "x": 240, "y": 175 },
+    { "id": "n3", "label": "3", "u": 1, "x": 420, "y": 20 },
+    { "id": "n4", "label": "4", "u": 0, "x": 420, "y": 120 },
+    { "id": "n7", "label": "7", "layer": "输出层", "u": 0, "x": 590, "y": 70 }
+  ],
+  "edges": [
+    { "from": "n1", "to": "n2", "w": 2 },
+    { "from": "n1", "to": "n6", "w": 2 },
+    { "from": "n5", "to": "n6", "w": 1 },
+    { "from": "n2", "to": "n3", "w": 3 },
+    { "from": "n2", "to": "n4", "w": 1 },
+    { "from": "n3", "to": "n4", "w": 1 },
+    { "from": "n4", "to": "n7", "w": 2 },
+    { "from": "n6", "to": "n7", "w": 1 }
+  ],
+  "events": [
+    { "id": "e1", "type": "node_pop", "node": "n1" },
+    { "id": "e2", "type": "edge_contribution", "from": "n1", "to": "n2", "w": 2 },
+    { "id": "e3", "type": "indegree_change", "node": "n2", "delta": -1, "indegree": 0 },
+    { "id": "e4", "type": "node_update", "node": "n2", "threshold": 2, "delta": 2, "value": 0, "calm": true },
+    { "id": "e5", "type": "node_pop", "node": "n5" },
+    { "id": "e6", "type": "edge_contribution", "from": "n5", "to": "n6", "w": 1 },
+    { "id": "e7", "type": "indegree_change", "node": "n6", "delta": -1, "indegree": 1 },
+    { "id": "e8", "type": "edge_contribution", "from": "n1", "to": "n6", "w": 2 },
+    { "id": "e9", "type": "indegree_change", "node": "n6", "delta": -1, "indegree": 0 },
+    { "id": "e10", "type": "node_update", "node": "n6", "threshold": 3, "delta": 3, "value": 0, "calm": true },
+    { "id": "e11", "type": "node_pop", "node": "n2" },
+    { "id": "e12", "type": "edge_contribution", "from": "n2", "to": "n3", "w": 3 },
+    { "id": "e13", "type": "indegree_change", "node": "n3", "delta": -1, "indegree": 0 },
+    { "id": "e14", "type": "node_update", "node": "n3", "threshold": 1, "delta": 0, "value": 0, "calm": true },
+    { "id": "e15", "type": "edge_contribution", "from": "n2", "to": "n4", "w": 1 },
+    { "id": "e16", "type": "indegree_change", "node": "n4", "delta": -1, "indegree": 1 },
+    { "id": "e17", "type": "node_pop", "node": "n6" },
+    { "id": "e18", "type": "edge_contribution", "from": "n6", "to": "n7", "w": 1 },
+    { "id": "e19", "type": "indegree_change", "node": "n7", "delta": -1, "indegree": 1 },
+    { "id": "e20", "type": "node_pop", "node": "n3" },
+    { "id": "e21", "type": "edge_contribution", "from": "n3", "to": "n4", "w": 1 },
+    { "id": "e22", "type": "indegree_change", "node": "n4", "delta": -1, "indegree": 0 },
+    { "id": "e23", "type": "node_update", "node": "n4", "threshold": 0, "delta": 1, "value": 1 },
+    { "id": "e24", "type": "node_pop", "node": "n4" },
+    { "id": "e25", "type": "edge_contribution", "from": "n4", "to": "n7", "w": 2 },
+    { "id": "e26", "type": "indegree_change", "node": "n7", "delta": -1, "indegree": 0 },
+    { "id": "e27", "type": "node_update", "node": "n7", "threshold": 0, "delta": 4, "value": 4 },
+    { "id": "e28", "type": "output_emit", "node": "n7", "value": 4 }
+  ]
+}

@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../components/Layout.astro';
+import NoteCard from '../../components/NoteCard.astro';
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<Layout title="算法笔记" description="按错误复盘写的算法学习记录：错在哪、为什么错、能迁移到什么模式。">
+  <header>
+    <h1 class="text-xl font-semibold text-slate-100">算法笔记</h1>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      每篇都按同一套结构写：题目 → 我的错误 → 为什么错 → 正确逻辑 → 可迁移模式 → AI 如何帮我。
+      重点不是「这题怎么做」，而是「我下次怎么不再错」。
+    </p>
+  </header>
+
+  {
+    notes.length === 0 ? (
+      <p class="mt-10 text-sm text-slate-500">还没有笔记。</p>
+    ) : (
+      <div class="mt-8 grid gap-4">
+        {notes.map((note) => (
+          <NoteCard note={note} />
+        ))}
+      </div>
+    )
+  }
+</Layout>

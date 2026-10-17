@@ -1,0 +1,5 @@
+﻿# esbuild / sharp 的平台二进制由各自 optional 依赖提供，不需要安装脚本即可用（构建与 dev 已验证）。
+# 显式设为 false，避免 pnpm 写出 "set this to true or false" 这种非法占位值。
+allowBuilds:
+  esbuild: false
+  sharp: false

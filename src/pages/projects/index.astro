@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../components/Layout.astro';
+
+// 手写项目（AlgoLens 有自己的详情页），以后再往 content/projects 里加
+const manual = [
+  {
+    title: 'AlgoLens',
+    summary:
+      '对拍反例可视化解释器 / 教学演示器。步进显示图、变量与违规边，把「平静节点仍传播」这类错误放慢给人看。',
+    tags: ['React', 'SVG', '教学工具'],
+    href: '/projects/algo-lens',
+    status: '可演示',
+    date: new Date('2026-02-10'),
+  },
+];
+
+const collected = (await getCollection('projects', ({ data }) => !data.draft)).map((entry) => ({
+  title: entry.data.title,
+  summary: entry.data.summary,
+  tags: entry.data.tags,
+  href: entry.data.href ?? `/projects/${entry.id}`,
+  status: entry.data.status,
+  date: entry.data.date,
+}));
+
+const projects = [...manual, ...collected].sort((a, b) => b.date.getTime() - a.date.getTime());
+---
+
+<Layout title="AI 实验室" description="自己做的小作品与实验记录，含 AlgoLens 对拍反例可视化解释器。">
+  <header>
+    <h1 class="text-xl font-semibold text-slate-100">AI 实验室</h1>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      这里放我自己写的小工具和实验，目标都是「把某个想不清的东西变清楚」。
+      不是产品，能跑、能演示、局限写明白就够了。
+    </p>
+  </header>
+
+  <div class="mt-8 grid gap-4">
+    {
+      projects.map((project) => (
+        <a
+          href={project.href}
+          class="group block rounded-xl border border-ink-800 bg-ink-900/50 p-5 transition-colors hover:border-accent/50 hover:bg-ink-900"
+        >
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 class="text-base font-semibold text-slate-100 group-hover:text-accent-soft">
+              {project.title}
+            </h2>
+            <span class="rounded bg-ink-800 px-2 py-0.5 text-xs text-slate-400">{project.status}</span>
+          </div>
+          <p class="mt-2 text-sm leading-relaxed text-slate-400">{project.summary}</p>
+          <div class="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
+            {project.tags.map((tag) => <span>#{tag}</span>)}
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</Layout>

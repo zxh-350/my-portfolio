@@ -1,0 +1,97 @@
+---
+import Layout from '../../components/Layout.astro';
+import AlgoLensDemo from '../../components/AlgoLensDemo.tsx';
+import trace from '../../data/algo-lens-trace.json';
+
+const rules = [
+  { label: '题目出处', value: trace.meta.source },
+  { label: '题目类型', value: '拓扑 / 传播类（有向无环图）' },
+  { label: '传播规则', value: trace.meta.rules },
+  { label: '已知错误', value: trace.meta.bug },
+];
+---
+
+<Layout
+  title="AlgoLens"
+  description="AlgoLens：对拍反例可视化解释器与教学演示器，用步进的方式把「平静神经元仍传播」这类错误暴露出来。"
+>
+  <nav class="text-xs text-slate-500">
+    <a class="hover:text-slate-300" href="/projects">← AI 实验室</a>
+  </nav>
+
+  <header class="mt-4">
+    <h1 class="text-xl font-semibold text-slate-100 sm:text-2xl">AlgoLens</h1>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      对拍反例可视化解释器 / 教学演示器。给它一份题面规则和一段预置的
+      <code class="font-mono text-slate-300">trace.json</code>，
+      它把每一步的图、变量、入度和违规边放慢给你看 ——
+      尤其是那种「值已经归零、却还在往下游传信号」的错误。
+    </p>
+  </header>
+
+  <section class="mt-6 grid gap-3 sm:grid-cols-2">
+    {
+      rules.map((row) => (
+        <div class="rounded-lg border border-ink-800 bg-ink-900/40 p-3">
+          <p class="text-xs text-slate-500">{row.label}</p>
+          <p class="mt-1 text-sm leading-relaxed text-slate-300">{row.value}</p>
+        </div>
+      ))
+    }
+  </section>
+
+  <section class="mt-8">
+    <h2 class="text-base font-semibold text-slate-100">步进演示</h2>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      下面这张图就是首篇复盘里的那张：神经元 2 和 6 结算后 C = 0 已经「平静」，
+      但 trace 里仍然有从它们出发的贡献事件。一步步走，违规的那条边会标红。
+    </p>
+    <div class="mt-4">
+      <AlgoLensDemo client:load />
+    </div>
+  </section>
+
+  <section class="mt-8">
+    <h2 class="text-base font-semibold text-slate-100">它怎么工作</h2>
+    <ol class="mt-3 space-y-2 text-sm leading-relaxed text-slate-400">
+      <li>
+        <span class="text-slate-300">1. 事件流。</span>
+        <code class="font-mono text-xs text-slate-300">trace.json</code> 里是一串按执行顺序排好的事件，
+        类型只有五种：<code class="font-mono text-xs">node_pop</code>、
+        <code class="font-mono text-xs">edge_contribution</code>、
+        <code class="font-mono text-xs">indegree_change</code>、
+        <code class="font-mono text-xs">node_update</code>、
+        <code class="font-mono text-xs">output_emit</code>。
+      </li>
+      <li>
+        <span class="text-slate-300">2. 位置就是状态。</span>
+        组件只保存一个下标 <code class="font-mono text-xs">step</code>，
+        第 N 步的图、变量表、违规边全部由「重放前 N 个事件」算出来。
+        所以拖到最后再拖回来，画面和日志一定是一致的，不会漂。
+      </li>
+      <li>
+        <span class="text-slate-300">3. 违规是算出来的，不是标好的。</span>
+        每当出现 <code class="font-mono text-xs">edge_contribution</code>，
+        组件就查此刻源神经元的值：只要 <code class="font-mono text-xs">C &lt;= 0</code> 却仍然贡献，
+        这条边就标红 —— 这正是「平静节点仍传播」。
+      </li>
+      <li>
+        <span class="text-slate-300">4. 只画 SVG。</span>
+        节点、边、箭头都是手写 SVG，没有任何图可视化库。
+      </li>
+    </ol>
+  </section>
+
+  <section class="mt-8 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+    <h2 class="text-base font-semibold text-amber-200">明确的局限</h2>
+    <ul class="mt-3 space-y-2 text-sm leading-relaxed text-amber-100/80">
+      <li>• 只支持拓扑 / 传播类题目，图和事件都得由人准备好。</li>
+      <li>• 规则抽取目前靠人工确认：题面怎么变成规则、trace 怎么生成，还没有自动化。</li>
+      <li>• 不会自动 AC，也不判题。它的产出是「看懂错误」，不是「通过评测」。</li>
+      <li>• 反例依赖预置数据，覆盖面取决于我手工造了多少组。</li>
+    </ul>
+    <p class="mt-3 text-xs text-amber-200/70">
+      写清楚局限比吹功能重要：这东西现在就是个「把错误放慢」的教学工具。
+    </p>
+  </section>
+</Layout>

@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* 暗色简洁主题：只用一层深灰背景 + 一点渐变光晕，不加多余装饰 */
+@theme {
+  --color-ink-950: #0b0f14;
+  --color-ink-900: #111721;
+  --color-ink-800: #1a2230;
+  --color-ink-700: #2a3546;
+  --color-accent: #6ea8fe;
+  --color-accent-soft: #9ec5ff;
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink-950);
+  color: #d7dee8;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 顶部渐变光晕，够用即可 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20% 0 auto 0;
+  height: 60vh;
+  background: radial-gradient(
+    60% 60% at 50% 0%,
+    color-mix(in srgb, var(--color-accent) 14%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 正文排版：Markdown 详情页直接生效，不装 typography 插件 */
+.prose-note > * + * {
+  margin-top: 1rem;
+}
+.prose-note h2 {
+  margin-top: 2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #eef3f9;
+}
+.prose-note h3 {
+  margin-top: 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #eef3f9;
+}
+.prose-note a {
+  color: var(--color-accent-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-note ul,
+.prose-note ol {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.prose-note ol {
+  list-style: decimal;
+}
+.prose-note li + li {
+  margin-top: 0.35rem;
+}
+.prose-note code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3rem;
+  background: var(--color-ink-800);
+  color: #cfe3ff;
+}
+.prose-note pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--color-ink-900);
+  border: 1px solid var(--color-ink-800);
+}
+.prose-note pre code {
+  padding: 0;
+  background: transparent;
+}
+.prose-note blockquote {
+  border-left: 3px solid var(--color-ink-700);
+  padding-left: 0.9rem;
+  color: #a9b6c7;
+}
+.prose-note table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.prose-note th,
+.prose-note td {
+  border: 1px solid var(--color-ink-800);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+}
