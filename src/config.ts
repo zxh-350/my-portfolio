@@ -6,11 +6,11 @@
 export const site = {
   name: 'My Portfolio',
   // 占位：换成你的名字或昵称
-  author: '你的名字',
+  author: 'zxh_fries',
   // 首页一句话简介
-  tagline: '大二计算机学生，用错误复盘学算法，用 AI 做小工具。',
+  tagline: '算法复盘网站',
   description:
-    '大二计算机学生的作品集与学习记录：算法学习感悟（错误复盘式）与 AI 小作品（AlgoLens 等）。',
+    '计算机学生的作品集与学习记录：算法学习感悟（错误复盘式）与 AI 小作品（AlgoLens ）。',
   email: 'you@example.com', // 占位
   github: 'https://github.com/your-name', // 占位
   // 仅作兜底：真实部署时 canonical 用 Astro.site（来自 astro.config 的 site / SITE_URL 环境变量）。
@@ -33,8 +33,8 @@ export const entries = [
   {
     href: '/notes',
     title: '算法笔记',
-    summary: '按「错误复盘」写的算法记录：错在哪、为什么错、下次怎么迁移。',
-    meta: '3 篇复盘',
+    summary: '按「错误复盘」写的算法记录：错在哪、迁移。',
+    meta: '复盘',
   },
   {
     href: '/projects',
