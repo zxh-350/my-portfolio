@@ -6,9 +6,9 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 // 部署信息集中在这里，避免散落各处。
-// - Vercel：把 SITE 换成你的正式域名（或直接用 *.vercel.app）
-// - GitHub Pages：设置环境变量 GITHUB_PAGES=1，并让 SITE 指向 https://<user>.github.io/<repo>
-const SITE = process.env.SITE_URL ?? 'https://example.vercel.app';
+// 当前线上：GitHub Pages（工作流会注入 SITE_URL + BASE_PATH + GITHUB_PAGES=1）
+// 如果以后部署到 Vercel 根路径，设置 SITE_URL 即可，base 会自动为 undefined。
+const SITE = process.env.SITE_URL ?? 'https://zxh-350.github.io/my-portfolio';
 
 // GitHub Pages 部署在子路径下，必须配 base；Vercel 不需要。
 const onGitHubPages = process.env.GITHUB_PAGES === '1';

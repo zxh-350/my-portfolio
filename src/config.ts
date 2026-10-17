@@ -13,8 +13,9 @@ export const site = {
     '大二计算机学生的作品集与学习记录：算法学习感悟（错误复盘式）与 AI 小作品（AlgoLens 等）。',
   email: 'you@example.com', // 占位
   github: 'https://github.com/your-name', // 占位
-  // 部署后换成正式域名，与 astro.config.mjs 的 site 保持一致
-  url: 'https://example.vercel.app',
+  // 仅作兜底：真实部署时 canonical 用 Astro.site（来自 astro.config 的 site / SITE_URL 环境变量）。
+  // 现在是 GitHub Pages 的地址，换域名时优先改这里的环境变量。
+  url: 'https://zxh-350.github.io/my-portfolio',
 };
 
 export const nav = [

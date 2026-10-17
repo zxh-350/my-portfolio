@@ -54,33 +54,39 @@ draft: false              # true 则不显示
 ---
 ```
 
-## 部署到 Vercel（推荐）
+## 线上地址
 
-1. 把仓库推到 GitHub。
-2. Vercel → Add New Project → 选这个仓库。框架会被识别为 Astro，直接 Deploy：
-   - Build Command: `pnpm build`
-   - Output Directory: `dist`
-3. 部署成功后到 Settings → Domains 看正式域名，把它填进两处：
-   - `src/config.ts` 的 `site.url`
-   - `public/robots.txt` 的 `Sitemap:` 行
-   - 或设置环境变量 `SITE_URL`（`astro.config.mjs` 会读）
-4. 重新部署一次即可。
+**https://zxh-350.github.io/my-portfolio/**（GitHub Pages，Actions 自动部署）
 
-`vercel.json` 已经放好最小配置，不需要额外改动。
+## 部署到 GitHub Pages（当前在用）
 
-## 部署到 GitHub Pages（备选）
-
-因为 Pages 部署在 `https://<user>.github.io/<repo>` 子路径下，**必须启用 base**，
-`astro.config.mjs` 已经用环境变量处理好了：
+Pages 部署在 `https://<user>.github.io/<repo>` 子路径下，**必须启用 base**。
+`astro.config.mjs` 已经用环境变量处理好，`.github/workflows/deploy.yml` 会注入：
 
 - `GITHUB_PAGES=1` → 启用 `base`
-- `BASE_PATH` → 子路径，默认 `/my-portfolio`
-- `SITE_URL` → 站点域名
+- `BASE_PATH=/<repo>` → 子路径
+- `SITE_URL=https://<user>.github.io` → 站点域名
+
+站内链接不能写死 `href="/notes"`，否则子路径下会 404。
+所有内部链接都要过 `withBase()`（见 `src/lib/paths.ts`），`robots.txt` 由
+`src/pages/robots.txt.ts` 端点生成，canonical 用 `Astro.site`。
 
 步骤：
 
-1. 仓库 Settings → Pages → Build and deployment → Source 选 **GitHub Actions**。
-2. 推送到 `main` 分支，`.github/workflows/deploy.yml` 会自动构建并发布。
+1. 仓库 Settings → Pages → Source 选 **GitHub Actions**（只需一次）。
+2. 推送到 `main`，工作流自动构建并发布。
+3. 若 Pages 未启用，deploy 作业会失败；启用后在 Actions 里 **Re-run all jobs** 即可。
+
+## 部署到 Vercel（可选）
+
+Vercel 部署在根路径，不需要 base：
+
+1. Vercel → Add New Project → 选仓库，框架识别为 Astro，直接 Deploy。
+2. 在项目环境变量里设 `SITE_URL=https://<你的域名>`，否则 canonical/OG 会退回默认值。
+3. `vercel.json` 已放好最小配置。
+
+> 注意：Vercel 登录只有 GitHub 授权或邮箱验证码，没有手机短信验证。
+
 3. 如果仓库名不是 `my-portfolio`，改 `astro.config.mjs` 里 `BASE_PATH` 的默认值，
    或在工作流里传 `BASE_PATH: /<你的仓库名>`（工作流已自动用仓库名传参）。
 
