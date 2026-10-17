@@ -4,7 +4,7 @@
  */
 
 export const site = {
-  name: 'My Portfolio',
+  name: 'Portfolio',
   // 占位：换成你的名字或昵称
   author: 'zxh_fries',
   // 首页一句话简介
