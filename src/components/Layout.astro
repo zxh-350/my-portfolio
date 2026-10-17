@@ -11,6 +11,9 @@ interface Props {
 const { title, description = site.description } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · 算法笔记与 AI 小作品`;
 const path = Astro.url.pathname;
+// 用 Astro.site（来自 astro.config 的 site / SITE_URL 环境变量），
+// 不要用 config.ts 里写死的演示域名，否则线上 canonical 会指错。
+const origin = Astro.site ?? new URL(site.url);
 // 去掉部署前缀后再比对，子路径部署时导航高亮才不会失效
 const here = currentPath(path);
 
@@ -26,11 +29,11 @@ const isCurrent = (href: string) =>
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(path, site.url).href} />
+    <link rel="canonical" href={new URL(path, origin).href} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={new URL(path, site.url).href} />
+    <meta property="og:url" content={new URL(path, origin).href} />
     <meta property="og:site_name" content={site.name} />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
