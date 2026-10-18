@@ -1,0 +1,137 @@
+---
+/**
+ * 销量回归 + 预测区间演示页。
+ *
+ * 数值自查基准（level = 0.95；单价 126.39、折扣 0.20、营销 1504、促销 1）：
+ *   tc = t(1−(1−level)/2, 1035) ≈ 1.962259   （df=1035；正态近似是 1.9600，能区分开）
+ *   ŷ  ≈ 385.2515   （基准 ≈385.3）
+ *   CI ≈ [379.63, 390.88]   宽 ≈ 11.25（基准 [379.7, 390.9]，宽 11.3）
+ *   PI ≈ [311.13, 459.37]   宽 ≈ 148.24（基准 [311.2, 459.4]，宽 148.2）
+ *   宽度比 PI/CI ≈ 13.18（基准 13.2），建议备货 ceil(459.37) = 460
+ * 该组数已用独立脚本按同一公式复算，与上面基准逐位吻合（差异只来自四舍五入）。
+ * 页面只做代入：β、σ̂、df、(XᵗX)⁻¹ 全部硬编码，不重新拟合。
+ */
+import Layout from '../../components/Layout.astro';
+import CiPiExplorer from '../../components/CiPiExplorer.tsx';
+import { withBase } from '../../lib/paths';
+
+const figures = [
+  {
+    src: '/figs/fig3-1_实测vs拟合.png',
+    alt: '26 周实测销量合计与模型拟合值的折线对比',
+    caption: '图 1　实测 vs 拟合：40 个商品每周销量合计（橙实线）与模型拟合（蓝虚线），两条线的缺口就是残差。',
+  },
+  {
+    src: '/figs/fig3-2_残差三联.png',
+    alt: '残差诊断三联图：残差与拟合值、Q-Q 图、残差与周次',
+    caption: '图 2　残差诊断三联：残差与拟合值没有明显结构，与周次却有向下的趋势。',
+  },
+  {
+    src: '/figs/fig4-1_场景区间.png',
+    alt: '三个场景的点预测与 CI、PI 误差棒对比，PI 明显更长',
+    caption: '图 3　三场景 CI/PI：橙棒是 PI、蓝棒是 CI；同一预测点上 PI 比 CI 宽十来倍，备货要看的是长的那个。',
+  },
+  {
+    src: '/figs/fig4-2_宽度曲线.png',
+    alt: '区间宽度随置信水平变化的曲线',
+    caption: '图 4　宽度–置信水平曲线：置信水平从 80% 提到 99%，PI 宽度几乎翻倍，CI 只从 7 件涨到 15 件。',
+  },
+];
+---
+
+<Layout
+  title="销量回归 + 预测区间"
+  description="把一次销量回归的置信区间与预测区间做成可拖动的演示：点预测、CI、PI、杠杆、备货建议，都是即时算出来的。"
+>
+  <nav class="text-xs text-slate-500">
+    <a class="hover:text-slate-300" href={withBase('/projects')}>← AI 实验室</a>
+  </nav>
+
+  <header class="mt-4">
+    <h1 class="text-xl font-semibold text-slate-100 sm:text-2xl">销量回归 + 预测区间</h1>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      一个 40 商品 × 26 周的销售面板，回归周销量对单价、折扣率、营销投入和促销。
+      模型本身不复杂，真正的坑在「区间」：同一个预测点，
+      <span class="text-slate-300">置信区间</span>（CI）和
+      <span class="text-slate-300">预测区间</span>（PI）是两回事，
+      拿错了会直接算错备货量。下面把四个输入拖一拖，两区间会立刻重算。
+    </p>
+  </header>
+
+  <section class="mt-8">
+    <h2 class="text-base font-semibold text-slate-100">拖动情景，看区间怎么变</h2>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      默认就是文章里的 S2 场景（提价 5%、折扣 0.20、营销 1504、促销周）。
+      滑杆和数字输入是同一份状态；置信水平显示成百分比，t 分位数每次重解。
+    </p>
+    <div class="mt-4">
+      <CiPiExplorer client:load />
+    </div>
+    <p class="mt-3 text-xs leading-relaxed text-slate-500">
+      自查：单价 126.39、折扣 0.20、营销 1504、促销 1、level 0.95 时，
+      ŷ ≈ 385.3 件，CI ≈ [379.7, 390.9]，PI ≈ [311.2, 459.4]。
+      公式：ŷ = β·x₀，h₀ = x₀ᵗ(XᵗX)⁻¹x₀，seMean = σ̂√h₀，sePred = σ̂√(1+h₀)，
+      区间 = ŷ ± t₍₁₋(1₋level)/₂, df₎ · se。t 分位数用不完全贝塔连分式 + 二分求解，没有用正态近似顶替。
+    </p>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-base font-semibold text-slate-100">拟合与诊断</h2>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      四张图是拟合时的原始输出，直接放在这里当证据：R² = 0.7532、调整 R² = 0.7522、
+      σ̂ = 37.66、F = 789.6（n = 1040，df = 1035）。
+    </p>
+    <div class="mt-4 grid gap-5">
+      {
+        figures.map((fig) => (
+          <figure class="rounded-xl border border-ink-800 bg-ink-900/40 p-3">
+            <img
+              src={withBase(fig.src)}
+              alt={fig.alt}
+              loading="lazy"
+              decoding="async"
+              class="block h-auto w-full max-w-full rounded-lg"
+            />
+            <figcaption class="mt-2 text-xs leading-relaxed text-slate-500">{fig.caption}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mt-10 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+    <h2 class="text-base font-semibold text-amber-200">这个模型不能拿来做什么</h2>
+    <ul class="mt-3 space-y-2 text-sm leading-relaxed text-amber-100/80">
+      <li>
+        • <span class="text-amber-200">这是 pooled OLS</span>：40 个商品的数据直接摞在一起回归，
+        没有商品固定效应。单价系数混了「贵的东西本来就卖得少」这种商品间差异，
+        所以它更像相关性，不是「提价 1 元就少卖 0.89 件」的因果结论。
+      </li>
+      <li>
+        • <span class="text-amber-200">线性模型不会因为组合罕见而加宽区间</span>：
+        区间宽窄只由杠杆 h₀ 和 σ̂ 决定，看不出「这组价格/促销组合历史上几乎没出现过」。
+      </li>
+      <li>
+        • <span class="text-amber-200">场景外推有风险</span>：S2（提价 5% + 促销）同档历史样本只有 1 行，
+        S3 是 0 行；这种区间的名义覆盖率没有保证。
+      </li>
+      <li>
+        • 数据是教学面板（40 商品 × 26 周 = 1040 行），不是真实店铺的全量流水，
+        结论的适用范围就是这份数据。
+      </li>
+    </ul>
+    <p class="mt-3 text-xs text-amber-200/70">
+      写清局限比堆指标重要：这两个区间在样本内好用，出了样本边界就只是参考。
+    </p>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-base font-semibold text-slate-100">回到背景</h2>
+    <p class="mt-2 text-sm leading-relaxed text-slate-400">
+      数据怎么来的、三个发现（价格效应大半是商品间差异、漏了向下趋势、品类不用分开建模）
+      和区间覆盖率检验，都写在
+      <a class="text-accent-soft underline underline-offset-2" href={withBase('/projects')}>AI 实验室</a>
+      的那篇《销量回归与预测区间》记录里；这篇记录的项目链接就指向当前这个演示页。
+    </p>
+  </section>
+</Layout>
