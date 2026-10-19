@@ -78,9 +78,12 @@ body::before {
   border-radius: 0.3rem;
   background: var(--color-ink-800);
   color: #cfe3ff;
+  /* 长标识符在手机上换行，而不是把整页撑出横向滚动 */
+  overflow-wrap: anywhere;
 }
 .prose-note pre {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 1rem;
   border-radius: 0.75rem;
   background: var(--color-ink-900);
@@ -89,6 +92,16 @@ body::before {
 .prose-note pre code {
   padding: 0;
   background: transparent;
+  overflow-wrap: normal; /* 代码块内部不换行，交给 pre 横向滚动 */
+}
+/* KaTeX：行间公式太宽时横向滚动，别把手机版面撑破 */
+.prose-note .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+.prose-note .katex {
+  font-size: 1.02em;
 }
 .prose-note blockquote {
   border-left: 3px solid var(--color-ink-700);

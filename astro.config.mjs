@@ -4,6 +4,8 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // 部署信息集中在这里，避免散落各处。
 // 当前线上：GitHub Pages（工作流会注入 SITE_URL + BASE_PATH + GITHUB_PAGES=1）
@@ -19,6 +21,14 @@ export default defineConfig({
   base: BASE,
   output: 'static',
   integrations: [mdx(), react(), sitemap()],
+
+  // LaTeX 数学公式：remark-math 负责识别 $...$ / $$...$$，rehype-katex 负责渲染成 HTML。
+  // throwOnError: false —— 写错一个公式只会在页面上显示红色原文，不会让整站构建失败。
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [[rehypeKatex, { throwOnError: false, strict: false }]],
+  },
+
   vite: {
     plugins: [tailwindcss()],
     server: {

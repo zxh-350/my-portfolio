@@ -1,5 +1,7 @@
-﻿---
+---
 import '../styles/global.css';
+// KaTeX 样式与字体从 node_modules 打包，不依赖任何 CDN（离线也能正确显示公式）
+import 'katex/dist/katex.min.css';
 import { nav, site } from '../config';
 import { currentPath, withBase } from '../lib/paths';
 
